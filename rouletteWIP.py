@@ -58,20 +58,20 @@ class Bin(frozenset):
     "An object used to represent the bins of a roulette wheel"
 
 class Wheel(object):
+    "An object used to represent a roulette wheel"
 
     def __init__(self,bins,seed):
-        self.bins = bins
-        rnd.seed(self.seed)
-        
+        self.bins = tuple( Bin() for i in range(38) )
+        self.seed = 1234
+
     def addOutcome(number,outcome):
-        "Adds an outcome to a bin"
+        "Adds given outcome to given bin"
         self.bins[number].append(outcome)
 
-    def spin(self):
-        return rnd.choice(self.bins)
+    def next():
+        "Generates a random number to select a bin index"
+        return rnd.randint(0,37)
 
-    def get(self,number):
-        return self.bins[number]
-
-class BinBuilder(object):
-    "An object used to add outcomes to each of the bins"
+    def getBin(bin):
+        "Returns given bin from wheel's collection"
+        return Wheel.bins[bin]
