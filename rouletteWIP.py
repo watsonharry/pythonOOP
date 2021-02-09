@@ -66,10 +66,6 @@ class Wheel(object):
         self.bins = tuple( Bin() for i in range(38) )
         self.seed = 1234
 
-    def addOutcome(self,number,outcome):
-        "Adds given outcome to given bin"
-        self.bins[number].add(outcome)
-
     def next(self):
         "Generates a random number to select a bin index"
         number = rnd.randint(0,37)
@@ -78,6 +74,14 @@ class Wheel(object):
     def getBin(self,number):
         "Returns given bin from wheel's collection"
         return self.bins[number]
+
+    def debug(self):
+        "Prints the outcomes of each bin. Used to test whether a wheel has been"
+        "constructed correctly"
+        for n in range(0,38):
+            print("Index: "+str(n))
+            print(self.getBin(n))
+            print("")
     
 class BinBuilder(object):
     "An object used to algorithmically construct each of the wheel's bins"
@@ -86,10 +90,13 @@ class BinBuilder(object):
         "Runs each of the algorithms which populate the given wheel"
         self.straight(wheel)
         self.split(wheel)
+        self.street(wheel)
+        self.corner(wheel)
+        self.column(wheel)
 
     def straight(self,wheel):
         "Generate straight bet outcomes"
-        for n in range(0,36):
+        for n in range(0,37):
             "Straight bets on all of the bins whose names match their wheel indices"
             wheel.bins[n].add(Outcome("Number "+str(n),35))
         wheel.bins[37].add(Outcome("Number 00",35))
@@ -98,9 +105,10 @@ class BinBuilder(object):
         "Generate split bet outcomes"
         
         "'Vertical' split bets"
-        for n in range(1,33):
-            wheel.bins[n].add(Outcome(str(n)+"-"+str(n+3)+" split",17))
-            wheel.bins[n+3].add(Outcome(str(n)+"-"+str(n+3)+" split",17))
+        for n in range(1,34):
+            outcome = Outcome(str(n)+"-"+str(n+3)+" split",17)
+            wheel.bins[n].add(outcome)
+            wheel.bins[n+3].add(outcome)
         wheel.bins[0].add(Outcome("0-1 split",17))
         wheel.bins[1].add(Outcome("0-1 split",17))
         wheel.bins[3].add(Outcome("00-3 split",17))
@@ -108,15 +116,40 @@ class BinBuilder(object):
 
         "'Horizontal' split bets"
         for r in range(0,12):
-            for n in range (1,2):
-                wheel.bins[n+r*3].add(Outcome(str(n+r*3)+"-"+str(n+1+r*3)+" split",17))
-                wheel.bins[n+1+r*3].add(Outcome(str(n+r*3)+"-"+str(n+1+r*3)+" split",17))
+            for n in range (1,3):
+                outcome = Outcome(str(n+r*3)+"-"+str(n+1+r*3)+" split",17)
+                wheel.bins[n+r*3].add(outcome)
+                wheel.bins[n+1+r*3].add(outcome)
         wheel.bins[0].add(Outcome("0-00 split",17))
         wheel.bins[37].add(Outcome("0-00 split",17))
+
+    def street(self,wheel):
+        "Generate street bet outcomes"
+        for r in range(0,12):
+            for n in range(1,4):
+                outcome = Outcome(str(1+r*3)+"-"+str(2+r*3)+"-"+str(3+r*3)+" street",11)
+                wheel.bins[n+r*3].add(outcome)
+
+    def corner(self,wheel):
+        "Generate corner bet outcomes"
+        for r in range(0,11):
+            for n in range(1,3):
+                outcome = Outcome(str(n+r*3)+"-"+str(n+1+r*3)+"-"+str(n+3+r*3)+"-"+str(n+4+r*3)+" corner bet",8)
+                wheel.bins[n+r*3].add(outcome)
+                wheel.bins[n+1+r*3].add(outcome)
+                wheel.bins[n+3+r*3].add(outcome)
+                wheel.bins[n+4+r*3].add(outcome)
+        
+    def column(self,wheel):
+        "Generate column bet outcomes"
+        for r in range(1,4):
+            for n in range(0,12):
+                wheel.bins[r+n*3].add(Outcome("Column "+str(r),2))
+        
             
 
 
 rw = Wheel()
 builder = BinBuilder()
 builder.populate(rw)
-print(rw.bins[28])
+rw.debug()
