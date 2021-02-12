@@ -97,6 +97,7 @@ class BinBuilder(object):
         self.dozen(wheel)
         self.colour(wheel)
         self.parity(wheel)
+        self.hilo(wheel)
 
     def straight(self,wheel):
         "Generate straight bet outcomes"
@@ -187,8 +188,16 @@ class BinBuilder(object):
         outcome = Outcome("even",1)
         for n in range(0,18):
             wheel.bins[2+n*2].add(outcome)
-        
 
+    def hilo(self,wheel):
+        "Generates high/low outcomes"
+        outcome = Outcome("low",1)
+        for n in range(1,19):
+            wheel.bins[n].add(outcome)
+        outcome = Outcome("high",1)
+        for n in range(19,37):
+            wheel.bins[n].add(outcome)
+        
 
 "Note: still need to create bets for 0-00 street and corners between 00,0 and 1,2,3"
 rw = Wheel()
