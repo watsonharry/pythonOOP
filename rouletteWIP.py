@@ -104,6 +104,7 @@ class BinBuilder(object):
         for n in range(0,37):
             "Straight bets on all of the bins whose names match their wheel indices"
             wheel.bins[n].add(Outcome("Number "+str(n),35))
+            
         wheel.bins[37].add(Outcome("Number 00",35))
 
     def split(self,wheel):
@@ -114,6 +115,7 @@ class BinBuilder(object):
             outcome = Outcome(str(n)+"-"+str(n+3)+" split",17)
             wheel.bins[n].add(outcome)
             wheel.bins[n+3].add(outcome)
+            
         wheel.bins[0].add(Outcome("0-1 split",17))
         wheel.bins[1].add(Outcome("0-1 split",17))
         wheel.bins[3].add(Outcome("00-3 split",17))
@@ -125,6 +127,7 @@ class BinBuilder(object):
                 outcome = Outcome(str(n+r*3)+"-"+str(n+1+r*3)+" split",17)
                 wheel.bins[n+r*3].add(outcome)
                 wheel.bins[n+1+r*3].add(outcome)
+                
         wheel.bins[0].add(Outcome("0-00 split",17))
         wheel.bins[37].add(Outcome("0-00 split",17))
 
@@ -134,21 +137,40 @@ class BinBuilder(object):
             for n in range(1,4):
                 outcome = Outcome(str(1+r*3)+"-"+str(2+r*3)+"-"+str(3+r*3)+" street",11)
                 wheel.bins[n+r*3].add(outcome)
+                
+        outcome = Outcome("0-1-2-3-00 street",6)
+        for n in range(0,4):
+            wheel.bins[n].add(outcome)
+        wheel.bins[37].add(outcome)
 
     def corner(self,wheel):
         "Generate corner bet outcomes"
         for r in range(0,11):
             for n in range(1,3):
-                outcome = Outcome(str(n+r*3)+"-"+str(n+1+r*3)+"-"+str(n+3+r*3)+"-"+str(n+4+r*3)+" corner bet",8)
+                outcome = Outcome(str(n+r*3)+"-"+str(n+1+r*3)+"-"+str(n+3+r*3)+"-"+str(n+4+r*3)+" corner",8)
                 wheel.bins[n+r*3].add(outcome)
                 wheel.bins[n+1+r*3].add(outcome)
                 wheel.bins[n+3+r*3].add(outcome)
                 wheel.bins[n+4+r*3].add(outcome)
+                
+        outcome = Outcome("0-1-2 corner",11)
+        for n in range(0,3):
+            wheel.bins[n].add(outcome)
+            
+        outcome = Outcome("2-3-00 corner",11)
+        for n in range(2,4):
+            wheel.bins[n].add(outcome)
+        wheel.bins[37].add(outcome)
+        
+        outcome = Outcome("0-2-00 corner",11)
+        wheel.bins[0].add(outcome)
+        wheel.bins[2].add(outcome)
+        wheel.bins[37].add(outcome)
 
     def line(self,wheel):
         "Generate line bet outcomes"
         for r in range(0,11):
-            outcome = Outcome(str(1+r*3)+"->"+str(6+r*3)+" line bet",5)
+            outcome = Outcome(str(1+r*3)+"->"+str(6+r*3)+" line",5)
             for n in range(1,4):
                 wheel.bins[n+r*3].add(outcome)
                 wheel.bins[n+3+r*3].add(outcome)
@@ -156,7 +178,7 @@ class BinBuilder(object):
     def dozen(self,wheel):
         "Generate dozen bets"
         for r in range(0,3):
-            outcome = Outcome(str(1+r*12)+"->"+str(12+r*12)+" dozen bet",2)
+            outcome = Outcome(str(1+r*12)+"->"+str(12+r*12)+" dozen",2)
             for n in range(1,13):
                 wheel.bins[n+r*12].add(outcome)
         
@@ -173,6 +195,7 @@ class BinBuilder(object):
         "^This is the pattern of distances between red bins"
         for n in range(0,len(pattern)+1):
             wheel.bins[1+sum(pattern[0:n])].add(outcome)
+            
         "Generate black bet outcomes"
         outcome = Outcome("black",1)
         pattern = [1,2,2,2,2,1,2,2,2,3,2,2,2,2,1,2,2,2]
@@ -184,6 +207,7 @@ class BinBuilder(object):
         outcome = Outcome("odd",1)
         for n in range(0,18):
             wheel.bins[1+n*2].add(outcome)
+            
         "Generate even outcomes"
         outcome = Outcome("even",1)
         for n in range(0,18):
@@ -194,12 +218,11 @@ class BinBuilder(object):
         outcome = Outcome("low",1)
         for n in range(1,19):
             wheel.bins[n].add(outcome)
+            
         outcome = Outcome("high",1)
         for n in range(19,37):
             wheel.bins[n].add(outcome)
         
-
-"Note: still need to create bets for 0-00 street and corners between 00,0 and 1,2,3"
 rw = Wheel()
 builder = BinBuilder()
 builder.populate(rw)
